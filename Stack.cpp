@@ -1,5 +1,7 @@
 #include <iostream>
 #include <stdlib.h>
+#include <string>
+#include <sstream>
 
 using namespace std;
 
@@ -8,7 +10,7 @@ class Node{
 	public:
 		Node();
 		Node(T);
-		deleteNode();
+		void deleteNode();
 		T data;
 		Node *nxt;
 };
@@ -25,7 +27,7 @@ Node<T>::Node(T Data){
 }
 
 template <typename T>
-Node<T>::deleteNode(){
+void Node<T>::deleteNode(){
 	this->data=NULL;
 	this->nxt=NULL;
 	free(this);
@@ -40,7 +42,7 @@ class Stack{
 		void push(T);
 		void pop();
 		void print();
-		int lenght();
+		int size();
 	private:
 		Node<T> *top;
 		int lenght;
@@ -76,46 +78,94 @@ void Stack<T>::pop(){
 		Node<T> *deleted = this->top;
 		this->top=this->top->nxt;
 		deleted->deleteNode();
+		this->lenght--;
 	}
 }
 
 template <typename T>
 void Stack<T>::print(){
 	Node<T> *temp =this->top;
-	while(temp->data!=NULL){
+	while(temp!=NULL){
 		cout<<temp->data<<endl;
 		temp=temp->nxt;
 	}
 }
 
 template <typename T>
-int Stack<T>::lenght(){
+int Stack<T>::size(){
 	return this->lenght;
 }
 
+Stack<int> strToStack(string s,string del = " "){
+	Stack<int> temp,st;
+	int size;
+	int start = 0,num;
+    int end = s.find(del);
+    while (end != -1) {
+    	stringstream intTicket(s.substr(start, end - start));
+    	intTicket>>num;
+		temp.push(num);
+        start = end + del.size();
+        end = s.find(del, start);
+    }
+    stringstream intTicket(s.substr(start, end - start));
+    intTicket>>num;
+	temp.push(num);
+	size=temp.size();
+	for(int i=0;i<size;i++){
+		st.push(temp.peek());
+		temp.pop();
+	}
+	return st;
+}
+
 int main(){
-	Stack<int> pila;
+	Stack<int> pila,temp,resp;
 	
-	pila.push(9);
+	/*pila.push(9);
 	pila.push(11);
 	pila.push(5);
 	pila.push(8);
 	pila.push(6);
-	pila.push(10);
-	
-	pila.print();
-	int max=0;
-	int act=0;
-	int cant=0;
-	for (int i = 0;i < pila.lenght();i++){
+	pila.push(10);*/
+	string st;
+	cin>>st;
+	st.erase(0,1);
+	st.erase(st.size()-1);
+	pila=strToStack(st,",");
+	cout<<"[";
+	int max=0,act=0,sig=0,cant=0,len=0,leninit=pila.size();
+	for (int i = 0;i < leninit;i++){
+		len=pila.size();
+		//cout<<"tamano pila: "<<pila.size()<<endl;
 		act=pila.peek();
-		for(int j = i+1;j < pila.lenght();j++){
-			
+		pila.pop();
+		for(int j = 1;j < len;j++){
+			temp.push(pila.peek());
+			sig=pila.peek();
+			if(act>max && sig>max){
+				max=sig;
+				cant++;
+				//cout<<"add: "<<pila.peek()<<endl;
+			}
+			pila.pop();
 		}
-		pila.pop()
+		/*cout<<"///temp"<<endl;
+		temp.print();
+		cout<<"///"<<endl;*/
+		for(int j = 0;j<len-1;j++){
+			pila.push(temp.peek());
+			temp.pop();
+		}
+		/*cout<<"///pila"<<endl;
+		pila.print();
+		cout<<"///"<<endl;*/
+		if(cant==0)cout<<cant;
+		else cout<<cant<<", ";
+		resp.push(cant);
 		cant=max=0;
 	}
-	
+	cout<<"]";
 	return 0;
 }
 

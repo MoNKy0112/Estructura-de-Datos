@@ -168,17 +168,11 @@ int main(){
 	st.erase(st.size()-1);
 	a=strToQueue(st,a,",");
 	cin>>x;
-	//int len=sizeof(req)/sizeof(req[0]);
 	Node<int> *def;
 	def = a.getNode(x);
 
 	
-	/*for(int i = 0;i<;i++){
-		a.put(req[i]);
-		if(i==x){
-			def = a.getNode(x);
-		}
-	}*/
+
 	
 	bool flag=false;
 	int y=0;
