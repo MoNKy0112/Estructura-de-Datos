@@ -2,6 +2,8 @@
 #include "universe.h"
 #include <cstdlib>
 
+
+//Universe sigue la idea de un Nodo pero fue creado para facilitar el movimiento entre siguientes y previos
 Universe::Universe(){
 	this->Number = 0;
 	
@@ -20,11 +22,13 @@ Universe::Universe(int num){
 	}
 }
 
+//---------------------Setters-------------------------//
+
 void Universe::setNumber(int num){
 	this->Number=num;
 }
 
-//setNext
+//*****************setNext***************//
 void Universe::setNext(){
 	Universe* newU = new Universe(0);
 	
@@ -40,7 +44,7 @@ void Universe::setNext(){
 		
 }
 
-void Universe::setNext(Universe* universe,bool rewrite,int number=-1){
+void Universe::setNext(Universe* universe,bool rewrite=false,int number=-1){
 	if(canBeNxt(universe)){
 		if(rewrite){
 			
@@ -89,6 +93,7 @@ void Universe::setNext(Universe *universes[] , bool rewrite){
 	
 }
 
+//******************setPrev******************//
 void Universe::setPrev(Universe *universe){
 	for(int i=0;i<6;i++){
 		if(this->Prev[i]==NULL){
@@ -114,6 +119,7 @@ void Universe::setPrev(Universe* universes[],bool rewrite){
 	}
 }
 
+//---------------------Getters-------------------------//
 int Universe::getNumber(){
 	if(this != NULL)
 	return this->Number;
@@ -126,7 +132,12 @@ Universe* Universe::getNext(int i){
 Universe* Universe::getPrev(int i){
 	return this->Prev[i];
 }
+//
 
+
+//--------------Ayuda para verificar conexiones------//
+
+//Verifica si un Nodo puede ser siguiente de this->universe
 bool Universe::canBeNxt(Universe* uni){
 	for(int i=0;i<6;i++){
 		if(this->Prev[i]==uni)return false;
@@ -134,9 +145,11 @@ bool Universe::canBeNxt(Universe* uni){
 	for(int i=0;i<6;i++){
 		if(this->Nxt[i]==uni)return false;
 	}
+	if(this==uni)return false;
 	return true;
 }
 
+//Verifica si existe espacio en Prev[]
 bool Universe::possPrev(){
 	for(int i=0;i<6;i++){
 		if(this->Prev[i]==NULL)return true;
@@ -144,6 +157,7 @@ bool Universe::possPrev(){
 	return false;
 }
 
+//Verifica si hay espacio en Next[]
 bool Universe::possNxt(){
 	for(int i=0;i<6;i++){
 		if(this->Nxt[i]==NULL)return true;

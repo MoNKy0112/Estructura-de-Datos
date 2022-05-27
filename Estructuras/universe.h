@@ -2,11 +2,10 @@
 #define universe_h
 
 #include <iostream>
-#include "Node.cpp"
 
 using namespace std;
 
-
+//Universe sigue la idea de un Nodo pero fue creado para facilitar el movimiento entre siguientes y previos 
 class Universe{
 	public:
 		int Number;

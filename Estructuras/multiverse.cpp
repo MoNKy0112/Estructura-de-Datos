@@ -2,6 +2,9 @@
 #include <stdlib.h>
 #include <string>
 #include "universe.cpp"
+#include "queue.cpp"
+
+
 
 using namespace std;
 
@@ -9,11 +12,12 @@ class Multiverse
 {
 	public:
 		Universe *act;
+		int cant;
 	public:
 		Multiverse();
 		Multiverse(Universe*,Universe*,Universe*);
 		void addConn(int[]);
-		
+		void findNext(Universe*);
 };
 
 Multiverse::Multiverse(){
@@ -22,7 +26,7 @@ Multiverse::Multiverse(){
 	this->act = newU;
 	this->act->setNext();
 	this->act->getNext(0)->setNext();
-	
+	this->act->getNext(0)->getNext(0)->setNext(act);
 }
 
 //revisar, posible error cuando universos ya tengan conexiones
@@ -30,8 +34,8 @@ Multiverse::Multiverse(Universe* a,Universe* b,Universe* c){
 	this->act = a;
 	this->act->setNext(b,false,0);
 	this->act->getNext(0)->setNext(c,false,0);
+	this->act->getNext(0)->getNext(0)->setNext(act,false,0);
 }
-
 
 void Multiverse::addConn(int num[]){
 	Universe *arr[6] = {NULL};
@@ -42,6 +46,29 @@ void Multiverse::addConn(int num[]){
 	}
 	
 	this->act->setNext(arr,true);
+}
+
+void Multiverse::findNext(Universe *universe){
+	
+	if(!universe->possNxt())return;
+	
+	Queue<Universe*> *colaAux = new Queue<Universe*>();
+	
+	colaAux->put(this->act);
+	
+	while(!colaAux->isEmpty()){
+		Universe *uni = colaAux->getFront()->Data ;
+		if(uni->possPrev() && uni->canBeNxt(universe)){
+			universe->setNext(uni);
+			return;
+		}else{
+			for(int i=0;i<6;i++){
+				if(uni->getNext(i)!=NULL)colaAux->put(uni->getNext(i));
+			}
+		}
+	}
+	cout<<"No es posible"<<endl;
+	return;
 }
 
 int main(){
@@ -68,13 +95,33 @@ int main(){
 	
 	
 	Multiverse *a = new Multiverse();
+	a->act->getNext(0)->setNext(ejU);
+	cout<<a->act->getNumber()<<endl;
 	for(int i=0;i<6;i++){
-		if(a->act->getNext(i)==NULL)cout<<"null: ";
+		if(a->act->getNext(i)!=NULL)
 		cout<<i<<" - "<<a->act->getNext(i)->getNumber()<<endl;
 	}
+	cout<<a->act->getNext(0)->getNumber()<<endl;	
 	for(int i=0;i<6;i++){
-		if(a->act->getNext(0)->getNext(i)==NULL)cout<<"null: ";
+		if(a->act->getNext(0)->getNext(i)!=NULL)
 		cout<<i<<" - "<<a->act->getNext(0)->getNext(i)->getNumber()<<endl;
+	}
+	cout<<a->act->getNext(0)->getNext(0)->getNumber()<<endl;
+	for(int i=0;i<6;i++){
+		if(a->act->getNext(0)->getNext(0)->getNext(i)!=NULL)
+		cout<<i<<" - "<<a->act->getNext(0)->getNext(0)->getNext(i)->getNumber()<<endl;
+	}
+	cout<<ejU->getNumber()<<endl;
+	a->findNext(ejU);
+	for(int i=0;i<6;i++){
+		if(ejU->getNext(i)!=NULL)
+		cout<<i<<" - "<<ejU->getNext(i)->getNumber()<<endl;
+	}
+	a->findNext(a->act);
+	cout<<a->act->getNumber()<<endl;
+	for(int i=0;i<6;i++){
+		if(a->act->getNext(i)!=NULL)
+		cout<<i<<" - "<<a->act->getNext(i)->getNumber()<<endl;
 	}
 	
 	/*
