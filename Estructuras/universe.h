@@ -5,7 +5,8 @@
 
 using namespace std;
 
-//Universe sigue la idea de un Nodo pero fue creado para facilitar el movimiento entre siguientes y previos 
+//Universe sigue la idea de un Nodo pero fue creado para facilitar el movimiento entre siguientes y previos
+//No se utiliza la calse llamada Node porque crea inconvenientes con Queue que a falta de tiempo no pude arreglar =)
 class Universe{
 	public:
 		int Number;
@@ -19,19 +20,22 @@ class Universe{
 		//setters
 		void setNumber(int);
 		void setNext();
-		void setNext(Universe*,bool,int);
-		void setNext(Universe*[],bool);
+		void setNext(Universe*,int);
 		
 		void setPrev(Universe*);
-		void setPrev(Universe*[],bool);
 		//getters
 		int getNumber();
 		Universe* getNext(int);
 		Universe* getPrev(int);
-		//void deleteUniverse();
+		//Delete
+		void deleteUniverse();
+		//AYUDAS
 		bool canBeNxt(Universe*);
 		bool possPrev();
 		bool possNxt();
+		
+		Universe* possDelPrevError();
+		Universe* possDelNxtError();
 		
 	
 	

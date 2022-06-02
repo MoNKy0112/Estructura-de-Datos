@@ -38,59 +38,34 @@ void Universe::setNext(){
 		newU->setNumber(number);	
 	}while(!canBeNxt(newU));
 	
-	newU->setPrev(this);
-	this->Nxt[0]=newU;
-	return;
+	for(int i=0;i<6;i++){
+		if(Nxt[i]==NULL){
+			newU->setPrev(this);
+			Nxt[i] = newU;
+			return;
+		}
+	}
 		
 }
 
-void Universe::setNext(Universe* universe,bool rewrite=false,int number=-1){
+void Universe::setNext(Universe* universe,int number=-1){
 	if(canBeNxt(universe)){
-		if(rewrite){
-			
-			//rewrite incompleto - reanidar los universos enlazados
-			if(number==-1){
-				Nxt[rand()%6] = universe;
-			}else{
-				this->Nxt[number] = universe;
-			}
-			return;
-		}else{
-			if(number==-1){
-				for(int i=0;i<6;i++){
-					if(Nxt[i]==NULL){
-						universe->setPrev(this);
-						Nxt[i] = universe;
-						return;
-					}
+		if(number==-1){
+			for(int i=0;i<6;i++){
+				if(Nxt[i]==NULL){
+					universe->setPrev(this);
+					Nxt[i] = universe;
+					return;
 				}
-			}else if(this->Nxt[number]==NULL){
-				universe->setPrev(this);
-				this->Nxt[number] = universe;
-				return;
-			}	
-		}
+			}
+		}else if(this->Nxt[number]==NULL){
+			universe->setPrev(this);
+			this->Nxt[number] = universe;
+			return;
+		}	
 	}
 	cout<<"NO DISPONIBLE PARA CONEXION"<<endl;
 	return;
-}
-	
-//FUNCION INCOMPLETA
-void Universe::setNext(Universe *universes[] , bool rewrite){
-		
-		for(int i=0;i<6;i++){
-			
-		}
-		
-		for(int i=0;i<6;i++){
-			//cout<<i<<endl;
-			//cout<<universes[i]->getNumber()<<endl;
-			
-			
-			Nxt[i] = universes[i];
-		}
-	
-	
 }
 
 //******************setPrev******************//
@@ -103,20 +78,6 @@ void Universe::setPrev(Universe *universe){
 	}
 	cout<<"NO HAY ESPACIO PARA CONECTAR"<<endl;
 	return;
-}
-
-//FUNCION INCOMPLETA
-void Universe::setPrev(Universe* universes[],bool rewrite){
-	if(rewrite){
-		for(int i=0;i<6;i++){
-			this->Prev[i] = universes[i];
-		}
-	}else{
-		//actual = this->getPrev();
-		for(int i=0;i<6;i++){
-			this->Prev[i] = universes[i];
-		}
-	}
 }
 
 //---------------------Getters-------------------------//
@@ -132,7 +93,20 @@ Universe* Universe::getNext(int i){
 Universe* Universe::getPrev(int i){
 	return this->Prev[i];
 }
-//
+//--------------------Delete----------------------------//
+void Universe::deleteUniverse(){
+	for(int i=0;i<6;i++){
+		for(int j=0;j<6;j++){
+			if(this->Nxt[i]!=NULL){
+				if(this->Nxt[i]->Prev[j]==this)this->Nxt[i]->Prev[i]=NULL;
+			}
+			if(this->Prev[i]!=NULL){
+				if(this->Prev[i]->Nxt[j]==this)this->Prev[i]->Nxt[i]=NULL;
+			}
+		}
+	}
+	free(this);
+}
 
 
 //--------------Ayuda para verificar conexiones------//
@@ -140,10 +114,14 @@ Universe* Universe::getPrev(int i){
 //Verifica si un Nodo puede ser siguiente de this->universe
 bool Universe::canBeNxt(Universe* uni){
 	for(int i=0;i<6;i++){
-		if(this->Prev[i]==uni)return false;
+		if(this->Prev[i]==uni){
+			return false;
+		}
 	}
 	for(int i=0;i<6;i++){
-		if(this->Nxt[i]==uni)return false;
+		if(this->Nxt[i]==uni){
+			return false;
+		}
 	}
 	if(this==uni)return false;
 	return true;
@@ -157,11 +135,46 @@ bool Universe::possPrev(){
 	return false;
 }
 
-//Verifica si hay espacio en Next[]
+//Verifica si hay espacio en Nxt[]
 bool Universe::possNxt(){
 	for(int i=0;i<6;i++){
 		if(this->Nxt[i]==NULL)return true;
 	}
 	return false;
 }
+
+//verifica si la posible destruccion desate un error de universos sin conexiones (universos anteriores)
+Universe* Universe::possDelPrevError(){
+	int cPrev=0;
+	for(int i=0;i<6;i++){
+		for(int j=0;j<6;j++){
+			if(this->Prev[i]!=NULL){
+				if(this->Prev[i]->Nxt[j]!=NULL && this->Prev[i]->Nxt[j]!=this)cPrev++;
+			}
+		}	
+		if(cPrev ==0){
+			cout<<"Universo:"<<Prev[i]->getNumber()<<" quedaria sin conexiones Nxt"<<endl;
+			return Prev[i];
+		}
+	}
+	return NULL;
+}
+
+//verifica si la posible destruccion desate un error de universos sin conexiones (universos posteriores)
+Universe* Universe::possDelNxtError(){
+	int cNxt=0;
+	for(int i=0;i<6;i++){
+		for(int j=0;j<6;j++){
+			if(this->Nxt[i]!=NULL){
+				if(this->Nxt[i]->Prev[j]!=NULL && this->Nxt[i]->Prev[j]!=this)cNxt++;		
+			}
+		}	
+		if(cNxt ==0){
+			cout<<"Univesro:"<<Nxt[i]->getNumber()<<" quedaria sin conexiones Prev"<<endl;
+			return Nxt[i];
+		}
+	}
+	return NULL;
+}
+
 
