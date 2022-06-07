@@ -1,10 +1,206 @@
+#include <iostream>
+#include <stdlib.h>
 #include <string>
 #include <sstream>
-
-#include "arbol.h"
-#include "queue.cpp"
+#include <vector>
 
 using namespace std;
+
+//-----------------------------------------COLA--------------------------------------------------------------------//
+//Declaracion estructura Nodo
+template <class T>
+
+class Node{
+	public:
+		//Declaracion funciones Nodo
+		Node();
+		Node(T);
+		void deleteNode();
+		T Data;
+		Node *Nxt;
+};
+
+
+//Creacion funciones Nodo
+template <typename T>
+Node<T>::Node()
+{
+	Data = NULL;
+	Nxt = NULL;
+}
+
+template <typename T>
+Node<T>::Node(T data){
+	Data=data;
+	Nxt=NULL;
+}
+
+template <typename T>
+void Node<T>::deleteNode(){
+	Data=NULL;
+	Nxt=NULL;
+	free(this);
+}
+
+//Declaracion estructura Cola
+template <class T>
+
+class Queue{
+	public:
+		//Declaracion funciones Cola
+		Queue();
+		void deleteQueue();
+		
+		bool isEmpty();
+		void put(T);
+		Node<T>* getFront();
+		Node<T>* getRear();
+		Node<T>* getNode(int);
+		void remove();
+	private:
+		Node<T> *front;
+		Node<T> *rear;
+};
+
+//creacion funciones Cola
+template <typename T>::
+Queue<T>::Queue(){
+	front=NULL;
+	rear=NULL;
+}
+
+template <typename T>
+void Queue<T>::deleteQueue(){
+	while(front) {
+		remove(this);
+	}
+	free(this);
+}
+
+template <typename T>
+bool Queue<T>::isEmpty(){
+	return (!front);
+}
+	
+template <typename T>
+void Queue<T>::put(T data){
+	Node<T> *node = new Node<T> (data);
+	if(!front)
+	{
+		front=node;
+		rear=node;
+	} else 
+	{
+		rear->Nxt=node;
+		rear=node;
+	}
+}
+
+template <typename T>
+Node<T>* Queue<T>::getFront(){
+	if(front){
+		return front;
+	}else{
+		return NULL;
+	}
+}
+
+template <typename T>
+Node<T>* Queue<T>::getRear(){
+	if(front){
+		return rear;
+	}else{
+		return NULL;
+	}
+}
+
+template <typename T>
+Node<T>* Queue<T>::getNode(int n){
+	if(front){
+		Node<T> *temp = front;
+		int pos=0;
+		while(temp->Nxt && pos<n){
+			temp = temp->Nxt;
+			pos++;
+		}
+		if(pos==n){
+			return temp;
+		}
+	}
+	
+	return NULL;
+	
+}
+
+
+template <typename T>
+void Queue<T>::remove(){
+	if(front){
+		Node<T> *deleted = front;
+		front=front->Nxt;
+		deleted->deleteNode();
+		if(!front) rear=NULL;
+	}
+}
+
+//-------------------------------------TREE NODE------------------------------------------------------------------------//
+template <class T>
+class TreeNode
+{
+	
+	public:
+		TreeNode();
+		TreeNode(T);
+		void Delete();
+		
+		T data;
+		vector <TreeNode<T>* > nxt;
+};
+
+template <typename T>
+TreeNode<T>::TreeNode()
+{
+	data= NULL;
+	
+}
+
+template <typename T>
+TreeNode<T>::TreeNode(T newData)
+{
+	data = newData;
+}
+
+template <typename T>
+void TreeNode<T>::Delete()
+{
+	for(int i=0;i<nxt.size();i++){
+		nxt[i] = NULL;
+	}
+	free(this);
+}
+
+
+//----------------------------------ARBOL----------------------------------------------------------------------//
+
+template <class T>
+struct Arbol{
+	private:
+	TreeNode<T> *raiz;
+	TreeNode<T>* buscar(TreeNode<T>* ,T);
+	int profundidad(TreeNode<T>* , int );
+	public:
+	Arbol();
+	Arbol(TreeNode<T>*);
+	
+	void setRaiz(T);
+	TreeNode<T> *getRaiz();
+	TreeNode<T> *buscar(T);
+	void insertar(T,T);
+	void levelOrder();
+	int cantidad();
+	int profundidad(int );
+};
+
 
 template <typename T>
 Arbol<T>::Arbol(){
@@ -116,6 +312,10 @@ int Arbol<T>::profundidad(int dato){
 	profundidad(this->raiz,dato);
 }
 
+
+
+//--------------------------------------FUNCIONES PROBLEMA-----------------------------------------------------//
+
 vector<int> stToArr(string a,string del=" "){
 	vector<int> arr;
 	int start = 0,num;
@@ -166,6 +366,9 @@ Arbol<int> * arrToTree(vector<int> arr){
 	
 	return arb;
 }
+
+
+//-------------------------------------MAIN------------------------------------------------------------------------//
 
 int main(){
 	Arbol<int> *arb=new Arbol<int> ();
@@ -218,3 +421,5 @@ int main(){
 
 	
 }
+
+//--------------------------------------------------------------------------------------------------------------------------//
